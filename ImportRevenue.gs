@@ -76,7 +76,7 @@ function importRevenue() {
    * @prop {number} net
    * @prop {number} tax
    * @prop {number} gross
-   *
+   * 
    * @typedef {object} RevenueEntry
    * @prop {string} time
    * @prop {Amount} amount
@@ -120,11 +120,15 @@ function importRevenue() {
 
     const postBody = {
       businessDate,
-      workspace: { externalNumber: +workspace },
-      total: totalsByDateAndWorkSpace[byDateSpace],
+      workspace: { externalNumber: workspace },
+      total: {
+        net: totalsByDateAndWorkSpace[byDateSpace].net.toFixed(2),
+        gross: totalsByDateAndWorkSpace[byDateSpace].gross.toFixed(2),
+        tax: totalsByDateAndWorkSpace[byDateSpace].tax.toFixed(2),
+      },
       hourly: entriesForGroup,
     };
-
+    
     // ui.alert(JSON.stringify(postBody, undefined, 2));
     // continue;
 
