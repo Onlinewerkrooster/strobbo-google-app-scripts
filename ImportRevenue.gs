@@ -76,7 +76,7 @@ function importRevenue() {
    * @prop {number} net
    * @prop {number} tax
    * @prop {number} gross
-   * 
+   *
    * @typedef {object} RevenueEntry
    * @prop {string} time
    * @prop {Amount} amount
@@ -102,14 +102,33 @@ function importRevenue() {
       totalsByDateAndWorkSpace[byDateSpace] = totalsForGroup;
     }
 
+    const net = +row[indexNet];
+    if (Number.isNaN(net)) {
+      throw new TypeError(
+        `Failed to convert net value "${row[indexNet]}" from type ${typeof row[indexNet]} to a number on row ${i + 1}`
+      );
+    }
+    const tax = +row[indexTax];
+    if (Number.isNaN(tax)) {
+      throw new TypeError(
+        `Failed to convert tax value "${row[indexTax]}" from type ${typeof row[indexTax]} to a number on row ${i + 1}`
+      );
+    }
+    const gross = +row[indexGross];
+    if (Number.isNaN(gross)) {
+      throw new TypeError(
+        `Failed to convert gross value "${row[indexGross]}" from type ${typeof row[indexGross]} to a number on row ${i + 1}`
+      );
+    }
+
     const entry = {
       time: row[indexTime] instanceof Date ? formatDateTime(row[indexTime]) : row[indexTime],
-      amount: { net: +row[indexNet], tax: +row[indexTax], gross: +row[indexGross] },
+      amount: { net, tax, gross },
     };
     entriesForGroup.push(entry);
-    totalsForGroup.net += entry.amount.net;
-    totalsForGroup.tax += entry.amount.tax;
-    totalsForGroup.gross += entry.amount.gross;
+    totalsForGroup.net += net;
+    totalsForGroup.tax += tax;
+    totalsForGroup.gross += gross;
   }
 
   const ok = [];
@@ -128,7 +147,7 @@ function importRevenue() {
       },
       hourly: entriesForGroup,
     };
-    
+
     // ui.alert(JSON.stringify(postBody, undefined, 2));
     // continue;
 
